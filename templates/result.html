@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineFlix | Recommendations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="nav">
+    <a href="/"><span class="nav-logo">CineFlix</span></a>
+</nav>
+
+<div class="liked-row">
+    <p class="eyebrow">Because you liked</p>
+    <h2><span>{{ movie.title() }}</span></h2>
+</div>
+
+<div class="container">
+
+    {% if recommendations %}
+    <p class="row-label">Recommended for you</p>
+    <div class="carousel">
+        <button class="carousel-arrow left" type="button" aria-label="Scroll left">‹</button>
+        <div class="carousel-track">
+            {% for film in recommendations %}
+            <div class="card" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+                <div class="card-poster">
+                    <img src="{{ film.poster }}"
+                         alt="{{ film.title }} poster"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x600/141414/E50914?text=No+Poster';">
+                    <span class="rating-badge">★ {{ "%.1f"|format(film.rating) }}</span>
+                </div>
+                <div class="card-content">
+                    <h3>{{ film.title }}</h3>
+                    <div class="movie-info">
+                        <span>{{ film.release_date[:4] }}</span>
+                    </div>
+                    <span class="match-tag">{{ (film.rating * 10) | round | int }}% Match</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-arrow right" type="button" aria-label="Scroll right">›</button>
+    </div>
+    {% else %}
+    <div class="error-box">
+        <h2>😔 Movie Not Found</h2>
+        <p>We couldn't find a match for that title. Try another movie.</p>
+    </div>
+    {% endif %}
+
+    <div class="back">
+        <a href="/" class="back-btn">← Search Again</a>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

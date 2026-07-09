@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineFlix</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="nav">
+    <span class="nav-logo">CineFlix</span>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-eyebrow">AI Recommendations</p>
+        <h1>Unlimited movies, matched to your taste.</h1>
+        <p class="subtitle">Tell us a film you love and <span>machine learning</span> finds what to watch next.</p>
+
+        <form class="search" id="searchForm" action="/recommend" method="POST">
+            <div class="search-field">
+                <input
+                        type="text"
+                        name="movie"
+                        id="movieInput"
+                        placeholder="Search a movie you love..."
+                        autocomplete="off"
+                        required>
+                <ul class="suggestions-list" id="suggestionsList"></ul>
+            </div>
+            <button type="submit" class="play-btn">
+                <span>▶ Get Recommendations</span>
+            </button>
+        </form>
+        <p class="hint">Powered by content-based filtering.</p>
+    </div>
+</section>
+
+<p class="footer">Cine<span class="red">Flix</span> — built for movie lovers.</p>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Finding movies you'll love&hellip;</p>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
