@@ -10,8 +10,6 @@ load_dotenv(".env")
 
 API_KEY = os.getenv("TMDB_API_KEY")
 
-print("API Key:", API_KEY)
-
 # Load pickle files
 print("Loading movies...")
 movies = pickle.load(open("movies.pkl", "rb"))   # <-- use the UPDATED movies.pkl (has collection_id)
@@ -29,33 +27,37 @@ print("✓ Model loaded")
 # -------------------------------------------------
 # Fetch Movie Poster
 # -------------------------------------------------
+_poster_cache = {}
+
 def fetch_poster(movie_title):
+    if movie_title in _poster_cache:
+        return _poster_cache[movie_title]
 
     url = "https://api.themoviedb.org/3/search/movie"
+    params = {"api_key": API_KEY, "query": movie_title}
 
-    params = {
-        "api_key": API_KEY,
-        "query": movie_title
-    }
-
-    response = requests.get(url, params=params)
-    data = response.json()
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        data = response.json()
+    except requests.RequestException:
+        data = {}
 
     if "results" in data and data["results"]:
         poster_path = data["results"][0].get("poster_path")
+        result = {
+            "poster": "https://image.tmdb.org/t/p/w500" + poster_path if poster_path else "https://via.placeholder.com/500x750?text=No+Poster",
+            "rating": data["results"][0].get("vote_average") or 0.0,
+            "release_date": data["results"][0].get("release_date") or ""
+        }
+    else:
+        result = {
+            "poster": "https://via.placeholder.com/500x750?text=No+Poster",
+            "rating": 0.0,
+            "release_date": ""
+        }
 
-        if poster_path:
-            return {
-                "poster": "https://image.tmdb.org/t/p/w500" + poster_path,
-                "rating": data["results"][0].get("vote_average") or 0.0,
-                "release_date": data["results"][0].get("release_date") or ""
-            }
-
-    return {
-        "poster": "https://via.placeholder.com/500x750?text=No+Poster",
-        "rating": 0.0,
-        "release_date": ""
-    }
+    _poster_cache[movie_title] = result
+    return result
 
 
 # -------------------------------------------------
